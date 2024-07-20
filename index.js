@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import swc from '@swc/core'
-import glob from 'fast-glob'
+import { globSync } from 'glob'
 
 /** @typedef {{root: string | URL, output: string | URL, entries: string[], platform: 'node' | 'neutral', exclude?: string[], ext?: string }} Opts */
 
@@ -107,7 +107,7 @@ export function build(options) {
       ? fileURLToPath(`${options.output}`)
       : path.resolve(options.output)
 
-  const files = glob.sync(options.entries, { cwd: root })
+  const files = globSync(options.entries, { cwd: root })
   const entries = files.map((file) => path.join(root, file))
 
   const artifacts = []
