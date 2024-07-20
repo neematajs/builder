@@ -4,6 +4,10 @@ import { build } from '@neematajs/builder'
 const { positionals: entries, values: options } = parseArgs({
   allowPositionals: true,
   options: {
+    root: {
+      type: 'string',
+      default: process.cwd(),
+    },
     output: {
       type: 'string',
       default: './dist',
@@ -17,8 +21,6 @@ const { positionals: entries, values: options } = parseArgs({
 })
 
 build({
-  root: process.cwd(),
   entries,
-  output: options.output,
-  platform: options.platform,
+  ...options,
 })

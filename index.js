@@ -30,7 +30,7 @@ function resolveExtensions(ast, filepath, options) {
         item.type === 'ExportAllDeclaration' ||
         item.type === 'ExportNamedDeclaration'
       ) {
-        if (isRelativeImport(item.source.value)) {
+        if (item.source && isRelativeImport(item.source.value)) {
           if (isIncluded(item.source.value, filepath, options.entries)) {
             replaceImport(item.source)
           }
