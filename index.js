@@ -67,22 +67,25 @@ function resolveExtensions(ast, filepath, options) {
     }
     return item
   })
-
-  // console.dir(ast.body, { depth: 15 })
 }
 
-function transform({ path, options }) {
-  const ast = swc.parseFileSync(path, {
+function transform({ filepath, options }) {
+  const ast = swc.parseFileSync(filepath, {
     syntax: 'typescript',
     target: 'esnext',
   })
-  resolveExtensions(ast, path, options)
+  resolveExtensions(ast, filepath, options)
   const { code, map } = swc.transformSync(ast, {
-    sourceFileName: path,
-    filename: path,
+    sourceFileName: path.relative(
+      path.join(options.output, path.relative(options.root, filepath)),
+      filepath,
+    ),
+    filename: filepath,
     sourceMaps: true,
     module: { type: options.platform === 'node' ? 'nodenext' : 'es6' },
     jsc: {
+      keepClassNames: true,
+      parser: { syntax: 'typescript' },
       target: 'esnext',
       experimental: { keepImportAttributes: true },
     },
@@ -94,7 +97,6 @@ function transform({ path, options }) {
  * @param {Opts} options
  */
 export function build(options) {
-  // const { entries, output, platform } = options
   const root =
     options.root instanceof URL
       ? fileURLToPath(`${options.root}`)
@@ -112,11 +114,11 @@ export function build(options) {
 
   console.log('Starting build...')
 
-  $f: for (const file of files) {
+  $f: for (const filepath of files) {
     for (const ext of [...(options.ext ?? []), '.d.ts', '.d.cts', '.d.mts']) {
-      if (file.endsWith(ext)) {
+      if (filepath.endsWith(ext)) {
         artifacts.push({
-          file,
+          filepath,
           contents: null,
           sourceMap: null,
         })
@@ -125,15 +127,17 @@ export function build(options) {
     }
 
     const [contents, sourceMap] = transform({
-      path: path.join(root, file),
+      filepath: path.join(root, filepath),
       options: {
         ...options,
         entries,
+        root,
+        output,
       },
     })
 
     artifacts.push({
-      file: file.replace(/\.ts$/, options.ext ?? '.js'),
+      filepath: filepath.replace(/\.ts$/, options.ext ?? '.js'),
       contents,
       sourceMap,
     })
@@ -143,18 +147,18 @@ export function build(options) {
 
   fs.rmSync(options.output, { recursive: true, force: true })
 
-  for (const { file, contents, sourceMap } of artifacts) {
-    const source = path.resolve(root, file)
-    const target = path.resolve(output, file)
+  for (const { filepath, contents, sourceMap } of artifacts) {
+    const source = path.resolve(root, filepath)
+    const target = path.resolve(output, filepath)
 
     fs.mkdirSync(path.dirname(target), { recursive: true })
 
-    console.log('Emitting:', file)
+    console.log('Emitting:', filepath)
     if (contents) fs.writeFileSync(target, contents)
     else fs.copyFileSync(source, target)
 
     if (sourceMap) {
-      console.log('Emitting:', `${file}.map`)
+      console.log('Emitting:', `${filepath}.map`)
       fs.writeFileSync(`${target}.map`, JSON.stringify(sourceMap))
     }
   }
