@@ -1,7 +1,7 @@
 import { parseArgs } from 'node:util'
 import { build } from '@neematajs/builder'
 
-const { positionals: options, values: entries } = parseArgs({
+const { positionals: entries, values: options } = parseArgs({
   allowPositionals: true,
   options: {
     output: {
