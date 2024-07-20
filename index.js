@@ -1,8 +1,12 @@
+import fsp from 'node:fs/promises'
+
+/**
+ * @returns {import('esbuild').Plugin}
+ */
 export default (options) => ({
   name: 'fix-extensions',
   setup(build) {
     build.onLoad({ filter: /.*/ }, async (args) => {
-      console.log(args)
       if (args.namespace === 'file') {
         const contents = await fsp.readFile(args.path, {
           encoding: 'utf-8',
