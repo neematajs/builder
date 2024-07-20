@@ -159,7 +159,7 @@ export function build(options) {
 
     if (sourceMap) {
       console.log('Emitting:', `${filepath}.map`)
-      fs.writeFileSync(`${target}.map`, JSON.stringify(sourceMap))
+      fs.writeFileSync(`${target}.map`, sourceMap)
     }
   }
 
