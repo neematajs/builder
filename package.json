@@ -1,11 +1,18 @@
 {
-  "name": "@neematajs/esbuild-fix-ext",
+  "name": "@neematajs/builder",
   "version": "1.0.0",
   "type": "module",
-  "main": "index.js",
-  "devDependencies": {
-    "@types/node": "20",
-    "esbuild": "^0.23.0"
+  "main": "./index.js",
+  "bin": {
+    "neemata-build": "./cli.js"
   },
-  "packageManager": "pnpm@9.5.0"
+  "dependencies": {
+    "@swc/core": "^1.7.0",
+    "fast-glob": "^3.3.2"
+  },
+  "packageManager": "pnpm@9.5.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/node": "20"
+  }
 }
