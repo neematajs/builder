@@ -5,7 +5,7 @@
   "main": "./index.js",
   "bin": {
     "neemata-build": "./bin/build.js",
-    "neemata-tag": "./bin/tag.sh"
+    "neemata-tag": "./bin/tag.js"
   },
   "dependencies": {
     "@swc/core": "^1.7.0",

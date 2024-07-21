@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { parseArgs } from 'node:util'
 import { build } from '@neematajs/builder'
 
