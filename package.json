@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
-    "@types/node": "^22"
+    "@types/node": "^18"
   },
   "engines": {
-    "node": ">= 22.6.0"
+    "node": ">= 18"
   },
   "packageManager": "pnpm@9.5.0"
   

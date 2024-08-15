@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { parseArgs } from 'node:util'
-import { build } from '@neemata/builder'
+import { build } from '@neematajs/builder'
 
 const { positionals: entries, values: options } = parseArgs({
   allowPositionals: true,
