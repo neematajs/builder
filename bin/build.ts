@@ -1,7 +1,7 @@
-#!/usr/bin/env node
+#!/usr/bin/env node --experimental-strip-types
 
 import { parseArgs } from 'node:util'
-import { build } from '@neematajs/builder'
+import { build } from '@neemata/builder'
 
 const { positionals: entries, values: options } = parseArgs({
   allowPositionals: true,
@@ -22,7 +22,10 @@ const { positionals: entries, values: options } = parseArgs({
   },
 })
 
+if (!['node', 'neutral'].includes(options.platform!))
+  throw new Error('Invalid platform')
+
 build({
   entries,
   ...options,
-})
+} as any)

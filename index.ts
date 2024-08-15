@@ -1,10 +1,24 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import swc from '@swc/core'
+import swc from '@swc/wasm'
+import type { Module } from '@swc/wasm'
 import { globSync } from 'glob'
 
-/** @typedef {{root: string | URL, output: string | URL, entries: string[], platform: 'node' | 'neutral', exclude?: string[], ext?: string }} Opts */
+export type Options = {
+  root: string | URL
+  output: string | URL
+  entries: string[]
+  platform: 'node' | 'neutral'
+  exclude?: string[]
+  ext?: string
+}
+
+export type Artifact = {
+  filepath: string
+  contents?: string | null
+  sourceMap?: string | null
+}
 
 const isRelativeImport = (val) => /^(\.|\/)/.test(val) && !/\.d\.ts$/.test(val)
 const isIncluded = (value, filepath, entries) => {
@@ -17,12 +31,7 @@ const replaceImport = (item, key = 'value') => {
   item.raw = undefined
 }
 
-/**
- * @param {import('@swc/core').Module} ast
- * @param {string} filepath
- * @param {Opts} options
- */
-function resolveExtensions(ast, filepath, options) {
+function resolveExtensions(ast: Module, filepath: string, options: Options) {
   ast.body = JSON.parse(JSON.stringify(ast.body), (key, item) => {
     if (item) {
       if (
@@ -70,9 +79,10 @@ function resolveExtensions(ast, filepath, options) {
 }
 
 function transform({ filepath, options }) {
-  const ast = swc.parseFileSync(filepath, {
+  const src = fs.readFileSync(filepath, 'utf8')
+  const ast = swc.parseSync(src, {
     syntax: 'typescript',
-    target: 'esnext',
+    target: 'es2022',
   })
   resolveExtensions(ast, filepath, options)
   const { code, map } = swc.transformSync(ast, {
@@ -86,17 +96,13 @@ function transform({ filepath, options }) {
     jsc: {
       keepClassNames: true,
       parser: { syntax: 'typescript' },
-      target: 'esnext',
-      experimental: { keepImportAttributes: true },
+      target: 'es2022',
     },
   })
   return [code, map]
 }
 
-/**
- * @param {Opts} options
- */
-export function build(options) {
+export function build(options: Options) {
   const root =
     options.root instanceof URL
       ? fileURLToPath(`${options.root}`)
@@ -110,7 +116,7 @@ export function build(options) {
   const files = globSync(options.entries, { cwd: root })
   const entries = files.map((file) => path.join(root, file))
 
-  const artifacts = []
+  const artifacts: Artifact[] = []
 
   console.log('Starting build...')
 
@@ -143,7 +149,7 @@ export function build(options) {
     })
   }
 
-  console.log('Cleaning output directory:', output)
+  console.log('Cleaning output directory:', path.relative(root, output))
 
   fs.rmSync(options.output, { recursive: true, force: true })
 
