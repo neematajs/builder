@@ -2,7 +2,7 @@
   "name": "@neematajs/builder",
   "version": "1.0.0",
   "type": "module",
-  "module": "./index.js",
+  "main": "./index.js",
   "bin": {
     "neemata-build": "./bin/build.js",
     "neemata-tag": "./bin/tag.js"
