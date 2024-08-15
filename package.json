@@ -1,5 +1,5 @@
 {
-  "name": "@neematajs/builder",
+  "name": "@nmtjs/builder",
   "version": "1.0.0",
   "type": "module",
   "main": "./index.js",
