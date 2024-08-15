@@ -2,10 +2,10 @@
   "name": "@neematajs/builder",
   "version": "1.0.0",
   "type": "module",
-  "main": "./index.js",
+  "module": "./index.js",
   "bin": {
-    "neemata-build": "./bin/build.ts",
-    "neemata-tag": "./bin/tag.ts"
+    "neemata-build": "./bin/build.js",
+    "neemata-tag": "./bin/tag.js"
   },
   "dependencies": {
     "@swc/wasm": "^1.7.0",

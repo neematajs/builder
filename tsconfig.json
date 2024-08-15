@@ -24,8 +24,10 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
+    "baseUrl": ".",
+
     "paths": {
-      "@neemata/builder": ["./index.ts"]
+      "@neemata/builder": ["./index.js"]
     }
   }
 }

@@ -2,23 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import swc from '@swc/wasm'
-import type { Module } from '@swc/wasm'
 import { globSync } from 'glob'
-
-export type Options = {
-  root: string | URL
-  output: string | URL
-  entries: string[]
-  platform: 'node' | 'neutral'
-  exclude?: string[]
-  ext?: string
-}
-
-export type Artifact = {
-  filepath: string
-  contents?: string | null
-  sourceMap?: string | null
-}
 
 const isRelativeImport = (val) => /^(\.|\/)/.test(val) && !/\.d\.ts$/.test(val)
 const isIncluded = (value, filepath, entries) => {
@@ -31,7 +15,7 @@ const replaceImport = (item, key = 'value') => {
   item.raw = undefined
 }
 
-function resolveExtensions(ast: Module, filepath: string, options: Options) {
+function resolveExtensions(ast, filepath, options) {
   ast.body = JSON.parse(JSON.stringify(ast.body), (key, item) => {
     if (item) {
       if (
@@ -102,7 +86,7 @@ function transform({ filepath, options }) {
   return [code, map]
 }
 
-export function build(options: Options) {
+export function build(options) {
   const root =
     options.root instanceof URL
       ? fileURLToPath(`${options.root}`)
@@ -116,7 +100,7 @@ export function build(options: Options) {
   const files = globSync(options.entries, { cwd: root })
   const entries = files.map((file) => path.join(root, file))
 
-  const artifacts: Artifact[] = []
+  const artifacts = []
 
   console.log('Starting build...')
 

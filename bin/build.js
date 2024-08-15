@@ -1,4 +1,4 @@
-#!/usr/bin/env node --experimental-strip-types
+#!/usr/bin/env node
 
 import { parseArgs } from 'node:util'
 import { build } from '@neemata/builder'
@@ -22,10 +22,10 @@ const { positionals: entries, values: options } = parseArgs({
   },
 })
 
-if (!['node', 'neutral'].includes(options.platform!))
+if (!['node', 'neutral'].includes(options.platform))
   throw new Error('Invalid platform')
 
 build({
   entries,
   ...options,
-} as any)
+})
